@@ -4,7 +4,7 @@ from govdoc_watcher.ranking import pick_best
 
 
 def mk_src():
-    return SourceConfig('cms','CMS','CMS','https://x','ICD',["official","icd-10-pcs","coding guidelines"],["not yet available"],["pdf"],True,True,None,True)
+    return SourceConfig('cms-icd10-pcs-guidelines','CMS','CMS','https://x','ICD',["official","icd-10-pcs","coding guidelines"],["not yet available"],["pdf"],True,True,None,True)
 
 
 def test_april_outranks_base_same_year():

@@ -11,6 +11,7 @@ class Candidate:
     extension: str
     year: int | None
     is_april_1: bool
+    document_kind: str | None = None
 
 
 def _detect_year(text: str) -> int | None:
@@ -35,3 +36,24 @@ def extract_candidates(html: str, base_url: str) -> list[Candidate]:
         ext = full_url.split("?")[0].split(".")[-1].lower() if "." in full_url else ""
         candidates.append(Candidate(full_url, text, ext, year, is_april_1))
     return candidates
+
+
+CMS_PCS_ANNUAL_RE = re.compile(r"/files/document/(?P<year>20\d{2})-official-icd-10-pcs-coding-guidelines\.pdf$", re.IGNORECASE)
+CMS_PCS_APRIL_RE = re.compile(r"/files/document/april-1-(?P<year>20\d{2})-official-icd-10-pcs-coding-guidelines\.pdf$", re.IGNORECASE)
+
+
+def annotate_cms_pcs_candidate(cand: Candidate) -> Candidate | None:
+    url = cand.url.split("?")[0]
+    m_april = CMS_PCS_APRIL_RE.search(url)
+    if m_april:
+        cand.year = int(m_april.group("year"))
+        cand.is_april_1 = True
+        cand.document_kind = "april_1"
+        return cand
+    m_annual = CMS_PCS_ANNUAL_RE.search(url)
+    if m_annual:
+        cand.year = int(m_annual.group("year"))
+        cand.is_april_1 = False
+        cand.document_kind = "annual"
+        return cand
+    return None

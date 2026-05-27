@@ -25,3 +25,15 @@ def test_unavailable_never_selected():
     html = '''<a href="/files/document/2025-official-icd-10-pcs-coding-guidelines.pdf">2025 Official ICD-10-PCS Coding Guidelines (PDF) - NOT YET AVAILABLE</a>'''
     best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
     assert best is None
+
+
+def test_excludes_cm_guidelines_pdf():
+    html = '''<a href="/files/document/2026-official-icd-10-cm-coding-guidelines.pdf">2026 Official ICD-10-CM Coding Guidelines (PDF)</a>'''
+    best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
+    assert best is None
+
+
+def test_excludes_zip_files():
+    html = '''<a href="/files/zip/april-1-2026-official-icd-10-pcs-coding-guidelines.zip">April 1, 2026 Official ICD-10-PCS Coding Guidelines (ZIP)</a>'''
+    best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
+    assert best is None

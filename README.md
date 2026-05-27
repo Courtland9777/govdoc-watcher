@@ -6,7 +6,7 @@ Containerized watcher/downloader for public government guideline PDFs. It solves
 Government PDF URLs change by year/update cycle, so this service discovers links from listing pages (for CMS, ICD-10 listing page) instead of pinning a fixed URL.
 
 ## Service layout
-See `config/`, `data/active`, `data/archive`, `data/metadata`, `logs`, `src/govdoc_watcher`, `tests`.
+Repository root is the app root. Key paths: `./config/`, `./data/active`, `./data/archive`, `./data/metadata`, `./logs/`, `./src/govdoc_watcher/`, `./tests/`.
 
 ## Source configuration
 `config/sources.yaml`:
@@ -42,7 +42,7 @@ One-shot mode:
 RUN_ONCE=true docker compose up --build
 ```
 
-## Host file locations
+## Host file locations (repository root bind mounts)
 - Active PDFs: `./data/active/<source-id>.pdf`
 - Archived PDFs: `./data/archive/<source-id>/...`
 - Metadata: `./data/metadata/<source-id>.json`

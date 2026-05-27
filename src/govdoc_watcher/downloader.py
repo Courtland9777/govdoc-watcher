@@ -1,10 +1,12 @@
 from pathlib import Path
+import tempfile
 import httpx
 
 
 def download_to_temp(url: str, timeout: int, user_agent: str) -> tuple[Path, dict]:
-    tmp = Path('/tmp/govdoc-download.pdf.tmp')
     headers = {"User-Agent": user_agent}
+    with tempfile.NamedTemporaryFile(prefix="govdoc-download-", suffix=".pdf", delete=False) as tf:
+        tmp = Path(tf.name)
     with httpx.stream("GET", url, headers=headers, timeout=timeout, follow_redirects=True) as r:
         r.raise_for_status()
         with tmp.open('wb') as f:

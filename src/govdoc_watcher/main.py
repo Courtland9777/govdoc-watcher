@@ -55,6 +55,7 @@ def process_source(src, timeout, user_agent):
         save_metadata(src.id, md)
         log.info("promotion success", extra={"source_id": src.id, "url": best.url, "sha256": new_sha})
     except Exception as e:
+        log.exception("source processing failed", extra={"source_id": src.id})
         md["error_count"] = int(md.get("error_count", 0)) + 1
         md["last_error_message"] = str(e)
         md["last_status"] = "error"

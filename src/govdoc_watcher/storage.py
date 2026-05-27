@@ -23,8 +23,9 @@ def promote_pdf(source_id: str, tmp_file: Path, new_sha: str) -> tuple[str | Non
     archive_dir.mkdir(parents=True, exist_ok=True)
     archived = None
     if active.exists():
+        old_sha = sha256_file(active)
         stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-        archived = str(archive_dir / f"{stamp}-{new_sha[:12]}.pdf")
+        archived = str(archive_dir / f"{stamp}-{old_sha[:12]}.pdf")
         shutil.move(str(active), archived)
     tmp_file.replace(active)
     return archived, str(active)

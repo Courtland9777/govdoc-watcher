@@ -1,0 +1,17 @@
+sources:
+  - id: cms-icd10-pcs-guidelines
+    name: CMS Official ICD-10-PCS Coding Guidelines
+    agency: CMS
+    discovery_url: https://www.cms.gov/medicare/coding-billing/icd-10-codes
+    document_type: ICD-10-PCS Coding Guidelines
+    required_text_patterns:
+      - official
+      - icd-10-pcs
+      - coding guidelines
+    exclude_text_patterns:
+      - not yet available
+    allowed_extensions:
+      - pdf
+    prefer_newest_year: true
+    prefer_april_update: true
+    enabled: true

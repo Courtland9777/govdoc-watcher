@@ -1,0 +1,15 @@
+services:
+  govdoc-watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: govdoc-watcher
+    env_file:
+      - .env
+    restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    volumes:
+      - ./config:/app/config:ro
+      - ./data:/data
+      - ./logs:/logs

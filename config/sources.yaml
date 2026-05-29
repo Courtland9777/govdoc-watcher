@@ -13,6 +13,4 @@ sources:
     allowed_extensions:
       - pdf
     prefer_newest_year: true
-    prefer_april_update: true
-    prefer_dated_update: true
     enabled: true

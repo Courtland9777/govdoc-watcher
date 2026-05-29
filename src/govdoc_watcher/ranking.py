@@ -29,9 +29,6 @@ def score_candidate(src: SourceConfig, cand: Candidate) -> tuple[int, str]:
     if src.prefer_newest_year and cand.year:
         score += cand.year
         reasons.append(f"year={cand.year}")
-    if (src.prefer_dated_update or src.prefer_april_update) and cand.is_april_1:
-        score += 50
-        reasons.append("april-1 bonus")
     return score, ", ".join(reasons)
 
 
@@ -58,11 +55,9 @@ def pick_best_cms_pcs(src: SourceConfig, candidates: list[Candidate]) -> tuple[C
         valid.append(matched)
     if not valid:
         return None, -1, "no valid CMS PCS candidates"
-    prefer_dated_update = src.prefer_dated_update or src.prefer_april_update
     valid.sort(
         key=lambda c: (
             c.year or 0,
-            1 if (prefer_dated_update and c.document_kind == "dated_update") else 0,
             _month_rank(c.effective_month),
             c.effective_day or 0 if c.effective_month else 0,
         ),

@@ -9,16 +9,14 @@ from govdoc_watcher.ranking import pick_best
 def mk_src():
     return SourceConfig(
         'cms-icd10-pcs-guidelines', 'CMS', 'CMS', 'https://www.cms.gov/medicare/coding-billing/icd-10-codes', 'ICD',
-        ["official", "icd-10-pcs", "coding guidelines"], ["not yet available"], ["pdf"], True, True, True, None, True
+        ["official", "icd-10-pcs", "coding guidelines"], ["not yet available"], ["pdf"], True, None, True
     )
 
 
-def test_annual_url_match():
+def test_rejects_annual_url():
     html = '<a href="/files/document/2025-official-icd-10-pcs-coding-guidelines.pdf">x</a>'
     best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
-    assert best is not None
-    assert best.document_kind == 'annual'
-    assert best.year == 2025
+    assert best is None
 
 
 def test_april_dated_update_url_match():
@@ -50,7 +48,7 @@ def test_rejects_impossible_day():
 def test_unchanged_when_selected_url_matches_metadata_and_active_exists(monkeypatch, tmp_path: Path):
     from govdoc_watcher import main
 
-    html = '<a href="/files/document/2026-official-icd-10-pcs-coding-guidelines.pdf">2026 Official ICD-10-PCS Coding Guidelines (PDF)</a>'
+    html = '<a href="/files/document/april-1-2026-official-icd-10-pcs-coding-guidelines.pdf">April 1, 2026 Official ICD-10-PCS Coding Guidelines (PDF)</a>'
 
     class Resp:
         text = html
@@ -61,7 +59,7 @@ def test_unchanged_when_selected_url_matches_metadata_and_active_exists(monkeypa
 
     saved = {}
     monkeypatch.setattr(main, 'load_metadata', lambda _sid: {
-        'selected_document_url': 'https://www.cms.gov/files/document/2026-official-icd-10-pcs-coding-guidelines.pdf'
+        'selected_document_url': 'https://www.cms.gov/files/document/april-1-2026-official-icd-10-pcs-coding-guidelines.pdf'
     })
     monkeypatch.setattr(main, 'save_metadata', lambda sid, payload: saved.update({'sid': sid, 'payload': payload}))
 

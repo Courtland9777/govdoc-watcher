@@ -55,7 +55,6 @@ def process_source(src, timeout, user_agent):
             "selected_effective_month": getattr(best, "effective_month", None),
             "selected_effective_day": getattr(best, "effective_day", None),
             "selected_document_kind": getattr(best, "document_kind", None),
-            "selected_fiscal_year": f"FY {best.year}" if getattr(best, "document_kind", None) == "annual" and best.year else None,
             "current_active_filename": active, "previous_sha256": old_sha, "current_sha256": new_sha,
             "etag": hmeta.get("etag"), "last_modified": hmeta.get("last_modified"), "last_status": "changed",
             "last_changed_timestamp": utc_now(), "last_successful_download_timestamp": utc_now(),

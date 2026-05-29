@@ -29,7 +29,7 @@ def score_candidate(src: SourceConfig, cand: Candidate) -> tuple[int, str]:
     if src.prefer_newest_year and cand.year:
         score += cand.year
         reasons.append(f"year={cand.year}")
-    if src.prefer_april_update and cand.is_april_1:
+    if (src.prefer_dated_update or src.prefer_april_update) and cand.is_april_1:
         score += 50
         reasons.append("april-1 bonus")
     return score, ", ".join(reasons)
@@ -58,6 +58,35 @@ def pick_best_cms_pcs(src: SourceConfig, candidates: list[Candidate]) -> tuple[C
         valid.append(matched)
     if not valid:
         return None, -1, "no valid CMS PCS candidates"
-    valid.sort(key=lambda c: (c.year or 0, 1 if (src.prefer_april_update and c.document_kind == "april_1") else 0), reverse=True)
+    prefer_dated_update = src.prefer_dated_update or src.prefer_april_update
+    valid.sort(
+        key=lambda c: (
+            c.year or 0,
+            1 if (prefer_dated_update and c.document_kind == "dated_update") else 0,
+            _month_rank(c.effective_month),
+            c.effective_day or 0 if c.effective_month else 0,
+        ),
+        reverse=True,
+    )
     best = valid[0]
     return best, 1000 + (best.year or 0), f"cms-url-pattern kind={best.document_kind} year={best.year}"
+
+
+def _month_rank(month: str | None) -> int:
+    if not month:
+        return 0
+    months = {
+        "january": 1,
+        "february": 2,
+        "march": 3,
+        "april": 4,
+        "may": 5,
+        "june": 6,
+        "july": 7,
+        "august": 8,
+        "september": 9,
+        "october": 10,
+        "november": 11,
+        "december": 12,
+    }
+    return months.get(month.lower(), 0)

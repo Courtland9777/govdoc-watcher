@@ -51,7 +51,9 @@ def process_source(src, timeout, user_agent):
         md.update({
             "source_id": src.id, "source_name": src.name, "agency": src.agency, "discovery_url": src.discovery_url,
             "selected_document_url": best.url, "selected_link_text": best.link_text,
-            "selected_effective_year": best.year, "selected_effective_date": "April 1" if best.is_april_1 else None,
+            "selected_effective_year": best.year, "selected_effective_date": getattr(best, "effective_date", None),
+            "selected_effective_month": getattr(best, "effective_month", None),
+            "selected_effective_day": getattr(best, "effective_day", None),
             "selected_document_kind": getattr(best, "document_kind", None),
             "selected_fiscal_year": f"FY {best.year}" if getattr(best, "document_kind", None) == "annual" and best.year else None,
             "current_active_filename": active, "previous_sha256": old_sha, "current_sha256": new_sha,

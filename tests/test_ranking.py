@@ -4,21 +4,28 @@ from govdoc_watcher.ranking import pick_best
 
 
 def mk_src():
-    return SourceConfig('cms-icd10-pcs-guidelines','CMS','CMS','https://x','ICD',["official","icd-10-pcs","coding guidelines"],["not yet available"],["pdf"],True,True,None,True)
+    return SourceConfig('cms-icd10-pcs-guidelines', 'CMS', 'CMS', 'https://x', 'ICD', ["official", "icd-10-pcs", "coding guidelines"], ["not yet available"], ["pdf"], True, True, True, None, True)
 
 
-def test_april_outranks_base_same_year():
+def test_dated_update_outranks_annual_same_year():
     html = '''<a href="/files/document/2026-official-icd-10-pcs-coding-guidelines.pdf">2026 Official ICD-10-PCS Coding Guidelines (PDF)</a>
     <a href="/files/document/april-1-2026-official-icd-10-pcs-coding-guidelines.pdf">April 1, 2026 Official ICD-10-PCS Coding Guidelines (PDF)</a>'''
     best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
     assert 'april-1-2026' in best.url
 
 
-def test_current_year_outranks_previous():
+def test_newest_year_outranks_previous():
     html = '''<a href="/files/document/2025-official-icd-10-pcs-coding-guidelines.pdf">2025 Official ICD-10-PCS Coding Guidelines (PDF)</a>
     <a href="/files/document/2026-official-icd-10-pcs-coding-guidelines.pdf">2026 Official ICD-10-PCS Coding Guidelines (PDF)</a>'''
     best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
     assert '2026' in best.url
+
+
+def test_later_dated_update_outranks_earlier_same_year():
+    html = '''<a href="/files/document/january-15-2027-official-icd-10-pcs-coding-guidelines.pdf">January 15, 2027 Official ICD-10-PCS Coding Guidelines (PDF)</a>
+    <a href="/files/document/october-1-2027-official-icd-10-pcs-coding-guidelines.pdf">October 1, 2027 Official ICD-10-PCS Coding Guidelines (PDF)</a>'''
+    best, _, _ = pick_best(mk_src(), extract_candidates(html, 'https://www.cms.gov'))
+    assert 'october-1-2027' in best.url
 
 
 def test_unavailable_never_selected():

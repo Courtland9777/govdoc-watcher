@@ -12,6 +12,9 @@ class Candidate:
     year: int | None
     is_april_1: bool
     document_kind: str | None = None
+    effective_month: str | None = None
+    effective_day: int | None = None
+    effective_date: str | None = None
 
 
 def _detect_year(text: str) -> int | None:
@@ -38,22 +41,49 @@ def extract_candidates(html: str, base_url: str) -> list[Candidate]:
     return candidates
 
 
+MONTH_TO_NUMBER = {
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
+    "december": 12,
+}
+
 CMS_PCS_ANNUAL_RE = re.compile(r"/files/document/(?P<year>20\d{2})-official-icd-10-pcs-coding-guidelines\.pdf$", re.IGNORECASE)
-CMS_PCS_APRIL_RE = re.compile(r"/files/document/april-1-(?P<year>20\d{2})-official-icd-10-pcs-coding-guidelines\.pdf$", re.IGNORECASE)
+CMS_PCS_DATED_UPDATE_RE = re.compile(
+    r"/files/document/(?P<month>january|february|march|april|may|june|july|august|september|october|november|december)-(?P<day>[1-9]|[12][0-9]|3[01])-(?P<year>20\d{2})-official-icd-10-pcs-coding-guidelines\.pdf$",
+    re.IGNORECASE,
+)
 
 
 def annotate_cms_pcs_candidate(cand: Candidate) -> Candidate | None:
     url = cand.url.split("?")[0]
-    m_april = CMS_PCS_APRIL_RE.search(url)
-    if m_april:
-        cand.year = int(m_april.group("year"))
-        cand.is_april_1 = True
-        cand.document_kind = "april_1"
+    m_dated = CMS_PCS_DATED_UPDATE_RE.search(url)
+    if m_dated:
+        month = m_dated.group("month").lower()
+        day = int(m_dated.group("day"))
+        year = int(m_dated.group("year"))
+        cand.year = year
+        cand.is_april_1 = (month == "april" and day == 1)
+        cand.document_kind = "dated_update"
+        cand.effective_month = month
+        cand.effective_day = day
+        cand.effective_date = f"{year:04d}-{MONTH_TO_NUMBER[month]:02d}-{day:02d}"
         return cand
     m_annual = CMS_PCS_ANNUAL_RE.search(url)
     if m_annual:
         cand.year = int(m_annual.group("year"))
         cand.is_april_1 = False
         cand.document_kind = "annual"
+        cand.effective_month = None
+        cand.effective_day = None
+        cand.effective_date = None
         return cand
     return None

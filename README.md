@@ -13,7 +13,7 @@ Repository root is the app root. Key paths: `./config/`, `./data/active`, `./dat
 - id, name, agency, discovery_url, document_type
 - required_text_patterns, exclude_text_patterns
 - allowed_extensions
-- prefer_newest_year, prefer_april_update
+- prefer_newest_year
 - check_interval_hours, enabled
 
 ## Discovery flow
@@ -21,11 +21,12 @@ Repository root is the app root. Key paths: `./config/`, `./data/active`, `./dat
 2. Parse all anchors.
 3. Normalize relative links.
 4. Build candidates from anchor text + URL.
-5. Reject excluded/unavailable links.
-6. Rank and choose best candidate.
+5. For the CMS ICD-10-PCS source, keep dated update PDFs only (`/files/document/<month>-<day>-<year>-official-icd-10-pcs-coding-guidelines.pdf`). Annual files are intentionally ignored because they are not considered the latest operational document for this workflow.
+6. Reject excluded/unavailable links.
+7. Rank and choose best candidate.
 
 ## Ranking
-Weights: required pattern match, extension match, detected year, April-1 bonus. Excluded links are disqualified.
+Generic source ranking weights required pattern match, extension match, and detected year. Excluded links are disqualified. The CMS ICD-10-PCS source uses source-specific URL matching and selects the newest parsed dated update PDF.
 
 ## Add another source
 Add another item in `config/sources.yaml` with its discovery URL and pattern rules.

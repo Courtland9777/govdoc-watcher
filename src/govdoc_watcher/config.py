@@ -15,7 +15,6 @@ class SourceConfig:
     exclude_text_patterns: list[str]
     allowed_extensions: list[str]
     prefer_newest_year: bool
-    prefer_april_update: bool
     check_interval_hours: int | None
     enabled: bool
 
@@ -36,7 +35,6 @@ def load_sources(path: Path) -> list[SourceConfig]:
         merged = {
             "allowed_extensions": ["pdf"],
             "prefer_newest_year": True,
-            "prefer_april_update": False,
             "check_interval_hours": None,
         }
         merged.update(item)

@@ -28,6 +28,12 @@ def process_source(src, timeout, user_agent):
             md["last_status"] = "no_valid_candidate"
             save_metadata(src.id, md)
             return
+        active_path = Path(f"/data/active/{src.id}.pdf")
+        if md.get("selected_document_url") == best.url and active_path.exists():
+            md["last_status"] = "unchanged"
+            md["selected_candidate_ranking"] = {"score": score, "reason": reason}
+            save_metadata(src.id, md)
+            return
         tmp, hmeta = download_to_temp(best.url, timeout, user_agent)
         if tmp.stat().st_size == 0 or not tmp.read_bytes().startswith(b"%PDF-"):
             tmp.unlink(missing_ok=True)
@@ -45,7 +51,10 @@ def process_source(src, timeout, user_agent):
         md.update({
             "source_id": src.id, "source_name": src.name, "agency": src.agency, "discovery_url": src.discovery_url,
             "selected_document_url": best.url, "selected_link_text": best.link_text,
-            "selected_effective_year": best.year, "selected_effective_date": "April 1" if best.is_april_1 else None,
+            "selected_effective_year": best.year, "selected_effective_date": getattr(best, "effective_date", None),
+            "selected_effective_month": getattr(best, "effective_month", None),
+            "selected_effective_day": getattr(best, "effective_day", None),
+            "selected_document_kind": getattr(best, "document_kind", None),
             "current_active_filename": active, "previous_sha256": old_sha, "current_sha256": new_sha,
             "etag": hmeta.get("etag"), "last_modified": hmeta.get("last_modified"), "last_status": "changed",
             "last_changed_timestamp": utc_now(), "last_successful_download_timestamp": utc_now(),

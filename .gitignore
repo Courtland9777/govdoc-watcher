@@ -2,3 +2,14 @@ __pycache__/
 *.pyc
 .env
 .venv/
+.pytest_cache/
+*.egg-info/
+
+data/active/*
+!data/active/.gitkeep
+data/archive/*
+!data/archive/.gitkeep
+data/metadata/*
+!data/metadata/.gitkeep
+logs/*
+!logs/.gitkeep

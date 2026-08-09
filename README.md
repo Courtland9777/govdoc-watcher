@@ -1,8 +1,10 @@
 # govdoc-watcher
 
+[![CI](https://github.com/Courtland9777/govdoc-watcher/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Courtland9777/govdoc-watcher/actions/workflows/ci.yml)
+
 Small Python/Docker project for watching public government document listing pages and keeping a local copy of the selected PDF. It is designed around dynamic discovery: the watcher starts from a stable listing page, ranks candidate PDF links, downloads the selected document, validates that it looks like a PDF, and records local metadata.
 
-Current status: public review / portfolio-support cleanup. This repository is a focused local utility, not a hosted product, public API, notification service, clinical system, HIPAA-validated workflow, or patient-data workflow.
+This repository is a focused local utility, not a hosted product, public API, notification service, clinical system, HIPAA-validated workflow, or patient-data workflow.
 
 ## What it demonstrates
 
